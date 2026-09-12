@@ -9,6 +9,7 @@ dotenv = "*"
 tiktoken = "*"
 transformers = "*"
 torch = "*"
+sentence-transformers = "*"
 
 [dev-packages]
 
