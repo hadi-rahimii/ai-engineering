@@ -15,6 +15,7 @@ langchain = "*"
 langchain-text-splitters = "*"
 langchain-huggingface = "*"
 langchain-chroma = "*"
+langchain-groq = "*"
 
 [dev-packages]
 
