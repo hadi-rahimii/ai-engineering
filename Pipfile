@@ -17,6 +17,8 @@ langchain-huggingface = "*"
 langchain-chroma = "*"
 langchain-groq = "*"
 langchain-tavily = "*"
+pydantic = "*"
+langgraph = "*"
 
 [dev-packages]
 
