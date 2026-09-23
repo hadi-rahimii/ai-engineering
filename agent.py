@@ -1,10 +1,12 @@
 import dotenv
 from langchain_groq import ChatGroq
-from langchain_core.messages import SystemMessage, AIMessage, HumanMessage
+from langchain_core.messages import SystemMessage, HumanMessage
 import os
 from langchain.agents import create_agent
 import requests
 from langchain_tavily import TavilySearch
+dotenv.load_dotenv(override=True)
+
 
 def get_weather(city: str):
     """
@@ -20,7 +22,7 @@ def get_weather(city: str):
 
     # آدرس پایه API برای آب و هوای فعلی
     base_url = "http://api.openweathermap.org/data/2.5/weather"
-    
+
     # پارامترهای درخواست
     params = {
         "q": city,
@@ -32,12 +34,12 @@ def get_weather(city: str):
     try:
         # ارسال درخواست GET با timeout برای جلوگیری از معطلی [citation:12]
         response = requests.get(base_url, params=params, timeout=10)
-        
+
         # اگر کد وضعیت خطا باشد، این خط یک Exception ایجاد می‌کند [citation:2]
-        response.raise_for_status() 
-        
+        response.raise_for_status()
+
         data = response.json()
-        
+
         # استخراج اطلاعات مورد نیاز از پاسخ JSON
         weather_info = {
             "city": data["name"],
@@ -56,11 +58,8 @@ def get_weather(city: str):
         # این خطا برای مسائل مربوط به شبکه (مثل قطعی اینترنت یا timeout) است [citation:2][citation:12]
         return {"error": f"Request failed: {req_err}"}
 
-search_tool = TavilySearch(max_results= 1)
 
-dotenv.load_dotenv(override=True)
-
-llm = ChatGroq(model='openai/gpt-oss-20b', temperature=0.5)
+search_tool = TavilySearch(max_results=1)
 
 
 class Agent:
@@ -69,12 +68,14 @@ class Agent:
         self.messages = [SystemMessage(
             'give me short answer to the user question and use the provided tools when it is neccessary.')]
 
-        self.agent = create_agent(model=self.llm, tools=[get_weather, search_tool])
+        self.agent = create_agent(model=self.llm, tools=[
+                                  get_weather, search_tool])
 
     def chat_loop(self):
 
         while True:
-            user_input = input('ask question (type "q" for terminate ) :')
+            user_input = input(
+                'ask question (type "q" for terminate ) :').strip().lower()
             if user_input.lower() == 'q':
                 print('have a nice day')
                 break
